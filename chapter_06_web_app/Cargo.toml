@@ -1,0 +1,15 @@
+[package]
+name = "chapter_06_web_app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Web 框架
+axum = "0.7"
+# 异步运行时
+tokio = { version = "1", features = ["full"] }
+# 序列化/反序列化
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# HTTP 中间件和静态文件服务
+tower-http = { version = "0.5", features = ["fs", "cors"] }

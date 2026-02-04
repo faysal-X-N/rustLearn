@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rust 全栈留言板</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; background-color: #f4f4f9; }
+        h1 { color: #333; text-align: center; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: #dea584; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 16px; width: 100%; }
+        button:hover { background-color: #c57e5a; }
+        #message-list { list-style: none; padding: 0; margin-top: 20px; }
+        .message-item { background: #fff; border-bottom: 1px solid #eee; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .message-content { font-size: 1.1em; }
+        .message-author { color: #888; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 Rust 留言板</h1>
+        
+        <div class="input-group">
+            <label for="username">昵称</label>
+            <input type="text" id="username" placeholder="你的名字">
+        </div>
+        <div class="input-group">
+            <label for="content">留言内容</label>
+            <textarea id="content" rows="3" placeholder="写点什么..."></textarea>
+        </div>
+        <button onclick="postMessage()">发布留言</button>
+
+        <ul id="message-list">
+            <!-- 留言将在这里显示 -->
+        </ul>
+    </div>
+
+    <script>
+        const API_URL = '/messages';
+
+        // 获取留言列表
+        async function fetchMessages() {
+            try {
+                const response = await fetch(API_URL);
+                const messages = await response.json();
+                renderMessages(messages);
+            } catch (error) {
+                console.error('获取留言失败:', error);
+            }
+        }
+
+        // 渲染留言
+        function renderMessages(messages) {
+            const list = document.getElementById('message-list');
+            list.innerHTML = '';
+            messages.reverse().forEach(msg => {
+                const li = document.createElement('li');
+                li.className = 'message-item';
+                li.innerHTML = `
+                    <div class="message-content">${escapeHtml(msg.content)}</div>
+                    <div class="message-author">— ${escapeHtml(msg.username)}</div>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        // 发布留言
+        async function postMessage() {
+            const username = document.getElementById('username').value.trim();
+            const content = document.getElementById('content').value.trim();
+
+            if (!username || !content) {
+                alert('请填写昵称和内容！');
+                return;
+            }
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, content })
+                });
+
+                if (response.ok) {
+                    document.getElementById('content').value = ''; // 清空内容
+                    fetchMessages(); // 刷新列表
+                } else {
+                    alert('发布失败');
+                }
+            } catch (error) {
+                console.error('发布错误:', error);
+            }
+        }
+
+        // 防 XSS 简单处理
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 初始加载
+        fetchMessages();
+    </script>
+</body>
+</html>

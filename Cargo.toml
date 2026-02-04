@@ -1,0 +1,11 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "chapter_01_basics",
+    "chapter_02_ownership",
+    "chapter_03_structs_enums",
+    "chapter_04_error_handling",
+    "chapter_05_concurrency",
+    "chapter_06_web_app",
+]
