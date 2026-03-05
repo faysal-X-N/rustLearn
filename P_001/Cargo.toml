@@ -1,0 +1,21 @@
+[package]
+name = "img2ascii"
+version = "0.1.0"
+edition = "2021"
+description = "Convert images to ASCII art and print to terminal"
+authors = ["Your Name <you@example.com>"]
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+# 图像解码与缩放
+image = { version = "0.25", features = ["jpeg", "png", "gif", "webp", "bmp", "ico", "tiff"] }
+# 命令行解析（derive 特性）
+clap = { version = "4.5", features = ["derive"] }
+# 错误定义
+thiserror = "1.0"
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "rustls-tls"] }
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1

@@ -1,0 +1,12 @@
+[package]
+name = "mini-redis-lite"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+thiserror = "1"
+
+[profile.release]
+debug = true
+
